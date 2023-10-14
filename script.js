@@ -3,7 +3,9 @@ let h3 = document.querySelector("h3");
 let button = document.querySelector("button");
 let times = document.querySelector(".times");
 
-let alarmTime;
+let alarmTime,
+     isAlarmSet = false;
+let ringtone = new Audio("/audio/sound.mp3");
 
 for (let i = 12; i > 0; i--) {
      i = i < 10 ? "0" + i : i;
@@ -24,7 +26,15 @@ for (let i = 2; i > 0; i--) {
 button.addEventListener("click", setAlarm);
 
 function setAlarm() {
+     if (isAlarmSet) {
+          alarmTime = "";
+          ringtone.pause();
+          times.classList.remove("hide");
+          button.innerText = "set alarm";
+          return (isAlarmSet = false);
+     }
      let time = `${selectMenu[0].value}:${selectMenu[1].value}${selectMenu[2].value}`;
+
      if (
           time.includes("hour") ||
           time.includes("min") ||
@@ -32,13 +42,14 @@ function setAlarm() {
      ) {
           return alert("please, select a valid time to set alarm");
      }
+     isAlarmSet = true;
      alarmTime = time;
      times.classList.add("hide");
      button.innerText = "clear alarm";
 }
 setInterval(timer, 1000);
 
-function timer(alarmTime) {
+function timer() {
      let date = new Date();
      let h = date.getHours();
      let m = date.getMinutes();
@@ -55,6 +66,8 @@ function timer(alarmTime) {
      s = s < 10 ? "0" + s : s;
      h3.innerText = `${h}:${m}:${s}${ampm}`;
      if (alarmTime == `${h}:${m}${ampm}`) {
-          console.log("alarm ringing...");
+          console.log("waki waki....");
+          ringtone.play();
+          ringtone.loop = true;
      }
 }
